@@ -1,7 +1,9 @@
-import React , { FormEvent, useState, useEffect } from 'react';
-import { Button, FormControl, InputLabel, OutlinedInput, FormLabel, RadioGroup, FormControlLabel, Radio, Box } from '@material-ui/core';
+import React , { useState, useEffect } from 'react';
 import userStore, { useStoreActions, useStoreState } from '../userStore/userStore';
 import { UserData } from '../userStore/interfaces';
+import { IFormActionProps, ReactForm } from 'react-forms';
+import { Box, makeStyles, useMediaQuery } from '@material-ui/core';
+import { FormikHelpers } from 'formik';
 
 export default function UserForm() {
     
@@ -11,7 +13,7 @@ export default function UserForm() {
 
     const editData = useStoreState( state => state.editUserData );
 
-    const [userInfo, setUserInfo] = useState<UserData>({ id : 0 , name : '' , age : 0 , gender : '' });
+    const [userInfo, setUserInfo] = useState<UserData>({ id : 0 , name : '' , age : '' , gender : '' });
 
     useEffect(() => {
         if(editData !== undefined) {
@@ -19,53 +21,98 @@ export default function UserForm() {
         }
     }, [editData]);
 
-    const handleSubmit = (event : FormEvent) => {
+    const styleClass = useStyles();
+    const mediaQueryMatch = useMediaQuery('(min-width:600px)');
 
-        event.preventDefault();
+    const actionConfig : IFormActionProps = {
+        submitButtonText: 'Add',
+        submitButtonLayout: 'center',
+        submitButtonProps: {
+            size: 'large',
+            fullWidth: true,
+            color: 'secondary',
+        },      
+    };
+     
+    const formConfig = [{
+            type : 'text',
+            valueKey : 'name',
+            
+            fieldProps : { label : 'Name' , fullWidth: true , className: styleClass.bottomMargin , color: 'secondary', } ,
+        },
+        {
+            type : 'text',
+            valueKey : 'age',
+            fieldProps : { label : 'Age' , fullWidth: true , className: styleClass.bottomMargin , color: 'secondary', } ,
+        },
+        {
+            type: 'mui-plain-text',
+            valueKey: 'gender-title',
+            fieldProps:{
+                isTextHtmlString: false, 
+                text: "Gender :",
+            }
+        },
+        {
+            type : 'radio' ,
+            valueKey : 'gender' ,
+            fieldProps : {
+                options : [
+                    {name : 'Female' , value : 'Female'} , 
+                    {name : 'Male' , value : 'Male'} , 
+                    {name : 'Others' , value : 'Others'}
+                ],
+                label : 'Gender',
+                className: styleClass.bottomMargin
+            }
+        }];
+     
 
+
+    const handleSubmit = ( values : UserData , onSubmitProps: FormikHelpers<UserData> ) => {
+        
         if(editData !== undefined) {
-            updateData(userInfo);
+            updateData(values);
             clearEdit(undefined);
         } else {
-            addData(userInfo);
+            addData(values);
         }
 
-        setUserInfo({ id : (userStore.getState().userList.length) , name : '' , age : 0 , gender : '' });
+        setUserInfo({ id : (userStore.getState().userList.length) , name : '' , age : '' , gender : '' }); 
+        onSubmitProps.setSubmitting(false);
+
     }
 
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const { name , value } = event.target;
-        setUserInfo({...userInfo , [name] : value});
-    }
-    
     return (
         <>
-                {/* User Form component */}
-                <Box p={3} borderRadius={15} boxShadow={3} style={{backgroundColor:"#fff"}}>
-                    <form onSubmit={handleSubmit}>
-                        <FormControl variant="outlined" color='secondary' style={{display:'block', marginBottom:'20px'}}>
-                            <InputLabel htmlFor="component-outlined">Name</InputLabel>
-                            <OutlinedInput id="component-outlined" value={userInfo.name} onChange={handleChange} name="name" label="Name" required />
-                        </FormControl>
-                        <FormControl variant="outlined" color='secondary' style={{display:'block', marginBottom:'20px'}}>
-                            <InputLabel htmlFor="component-outlined">Age</InputLabel>
-                            <OutlinedInput id="component-outlined" value={userInfo.age} onChange={handleChange} name="age" label="Age" />
-                        </FormControl>
-                        <FormControl component="fieldset" style={{display:'block', marginBottom:'20px'}}>
-                            <FormLabel component="legend">Gender</FormLabel>
-                            <RadioGroup aria-label="gender" name="gender" value={userInfo.gender} onChange={handleChange}>
-                                <FormControlLabel value="Female" control={<Radio />} label="Female" />
-                                <FormControlLabel value="Male" control={<Radio />} label="Male" />
-                                <FormControlLabel value="Other" control={<Radio />} label="Other" />
-                            </RadioGroup>
-                        </FormControl>
-                        <Button fullWidth type="submit" style={{backgroundColor:"#4caf50", color:"#fff"}} size="large" variant="contained" className="userForm-card-btn">
-                            {(editData === undefined) ? 'Add' : 'Update' }
-                        </Button>
-                    </form>
+            {/* User Form component */}
+                
+            <Box display='flex' justifyContent='center' alignItems='center' minHeight={mediaQueryMatch ? '100vh' : '500px'}  >
+                <Box p={4} borderRadius={15} boxShadow={3} className={styleClass.basicBoxStyle}>
+
+                    <ReactForm
+                    formId='userForm'
+                    actionConfig={actionConfig}
+                    config={formConfig}
+                    initialValues={userInfo}
+                    onSubmit = {handleSubmit} 
+                    enableReinitialize 
+                    />
+
                 </Box>
+            </Box>
         </>
     );
 }
 
-
+const useStyles = makeStyles({
+    basicBoxStyle: {
+        background: '#fff',
+        width: '90%',
+        maxWidth: '400px',
+        margin: 'auto'
+    },
+    bottomMargin: {
+        marginBottom: '20px'
+    }
+});

@@ -3,7 +3,7 @@ import { action, Action } from "easy-peasy";
 export interface UserData {
     id: number;
     name: string;
-    age: number;
+    age: string;
     gender: string;
 }
 
