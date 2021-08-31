@@ -25,7 +25,7 @@ export default function UserForm() {
     const mediaQueryMatch = useMediaQuery('(min-width:600px)');
 
     const actionConfig : IFormActionProps = {
-        submitButtonText: 'Add',
+        submitButtonText: (editData === undefined) ? 'Add' : 'Update',
         submitButtonLayout: 'center',
         submitButtonProps: {
             size: 'large',
