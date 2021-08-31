@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.js": "/card-generator/static/js/main.2d03f049.chunk.js",
-    "main.js.map": "/card-generator/static/js/main.2d03f049.chunk.js.map",
+    "main.js": "/card-generator/static/js/main.4fbe256f.chunk.js",
+    "main.js.map": "/card-generator/static/js/main.4fbe256f.chunk.js.map",
     "runtime-main.js": "/card-generator/static/js/runtime-main.1a1c56aa.js",
     "runtime-main.js.map": "/card-generator/static/js/runtime-main.1a1c56aa.js.map",
     "static/js/2.ff8fa4cc.chunk.js": "/card-generator/static/js/2.ff8fa4cc.chunk.js",
@@ -14,6 +14,6 @@
   "entrypoints": [
     "static/js/runtime-main.1a1c56aa.js",
     "static/js/2.ff8fa4cc.chunk.js",
-    "static/js/main.2d03f049.chunk.js"
+    "static/js/main.4fbe256f.chunk.js"
   ]
 }
